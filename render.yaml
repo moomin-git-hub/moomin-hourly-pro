@@ -1,0 +1,17 @@
+# Vaqt Banki — Render Blueprint (server Render'da, baza Neon'da).
+# Render → New → Blueprint → shu repozitoriyni tanlang. DATABASE_URL qiymati so'raladi.
+services:
+  - type: web
+    name: vaqt-banki
+    runtime: node
+    plan: free
+    region: frankfurt            # Neon'dagi baza ham Frankfurt'da bo'lsin (AWS Europe (Frankfurt)) — so'rovlar tez ishlaydi
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health # bu tekshiruv bazaga tegmaydi — baza bemalol uxlaydi
+    autoDeployTrigger: commit    # GitHub'ga yangi fayl yuklansa, o'zi qayta joylanadi
+    envVars:
+      - key: DATABASE_URL        # Neon → Connect oynasidagi manzil (postgresql://…neon.tech/neondb?sslmode=require…)
+        sync: false
+      - key: ALLOW_SIGNUP        # o'zingiz ro'yxatdan o'tgach "0" qiling — begona hisob ocholmaydi
+        value: "1"
