@@ -1,0 +1,41 @@
+<body>
+<div class="bg" aria-hidden="true"></div>
+<!--SPRITE-->
+
+<!-- Yuklanish ekrani -->
+<div id="boot" class="boot" aria-hidden="true">
+  <svg class="logo" viewBox="0 0 64 64"><defs><linearGradient id="lgBoot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fdcc0"/><stop offset=".5" stop-color="#3f8ee8"/><stop offset="1" stop-color="#4a4bff"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#lgBoot)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-width="5"/><path d="M32 22v10l7 5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- Asosiy ekranlar: har biri JS orqali chiziladi -->
+<main id="app" class="app" hidden>
+  <section class="screen" id="scr-asosiy" data-screen="asosiy"></section>
+  <section class="screen" id="scr-daftar" data-screen="daftar" hidden></section>
+  <section class="screen" id="scr-fokus"  data-screen="fokus"  hidden></section>
+  <section class="screen" id="scr-reja"   data-screen="reja"   hidden></section>
+  <section class="screen" id="scr-tahlil" data-screen="tahlil" hidden></section>
+</main>
+
+<!-- Pastki panel: liquid glass navigatsiya + suzuvchi tugmalar -->
+<div class="dock" id="dock" hidden>
+  <button class="mini" id="mini" data-act="tab" data-tab="fokus" hidden aria-label="Sekundomer ishlayapti"></button>
+  <div class="fabs" id="fabs">
+    <button class="fab fab-ai" data-act="aiOpen" aria-label="AI yordamchi"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg></button>
+    <button class="fab fab-add" data-act="entryNew" aria-label="Yangi yozuv qo'shish"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+  </div>
+  <nav class="nav" id="nav" aria-label="Asosiy bo'limlar">
+    <span class="nav-lens" id="navLens" aria-hidden="true"></span>
+    <button class="nav-b on" data-act="tab" data-tab="asosiy"><svg class="ic" aria-hidden="true"><use href="#i-layout-grid"/></svg><span>Asosiy</span></button>
+    <button class="nav-b" data-act="tab" data-tab="daftar"><svg class="ic" aria-hidden="true"><use href="#i-receipt-text"/></svg><span>Daftar</span></button>
+    <button class="nav-b" data-act="tab" data-tab="fokus"><svg class="ic" aria-hidden="true"><use href="#i-timer"/></svg><span>Fokus</span></button>
+    <button class="nav-b" data-act="tab" data-tab="reja"><svg class="ic" aria-hidden="true"><use href="#i-goal"/></svg><span>Reja</span></button>
+    <button class="nav-b" data-act="tab" data-tab="tahlil"><svg class="ic" aria-hidden="true"><use href="#i-chart-column"/></svg><span>Tahlil</span></button>
+  </nav>
+</div>
+
+<div id="pages"></div>
+<div id="overlays"></div>
+<div id="auth" class="auth" hidden></div>
+<div id="lock" class="lock" hidden></div>
+<div id="fx" aria-hidden="true"></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>

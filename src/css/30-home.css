@@ -1,0 +1,218 @@
+/* ============================================================
+   Asosiy ekran, yozuv oynasi, tanlagichlar
+   ============================================================ */
+/* Telefonda bloklar tartibi sinflar bilan (o1..o9), kompyuterda ikki ustun */
+.home .col{display:contents}
+.home>.col>*{min-width:0}
+.o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}.o8{order:8}.o9{order:9}
+@media(min-width:900px){ .home .col{display:flex} .home .col>*{order:0} }
+
+/* --- Qoldiq kartasi --- */
+.hero{position:relative;border-radius:var(--r-xl);padding:22px 22px 20px;color:#fff;background:var(--hero);box-shadow:var(--hero-shadow);overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;z-index:-1;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.28) 0%,rgba(255,255,255,0) 68%)}
+.hero::after{content:"";position:absolute;z-index:-1;right:22px;top:22px;width:58px;height:58px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.32);box-shadow:0 0 0 9px rgba(255,255,255,.08),0 0 0 22px rgba(255,255,255,.05)}
+[data-theme="dark"] .hero{border:1px solid rgba(255,255,255,.10)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:74px}
+.hero-lbl{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:16px;letter-spacing:-.01em;text-align:left;min-width:0;white-space:nowrap}
+.hero-lbl b{font-weight:700}
+.hero-lbl span{font-weight:500;opacity:.84}
+.hero-lbl .ic{width:17px;height:17px;opacity:.75}
+.hero-num{display:flex;align-items:baseline;gap:9px;margin-top:8px}
+.hero-num b{font-size:clamp(50px,15.5vw,68px);font-weight:800;letter-spacing:-.045em;word-spacing:.16em;line-height:1;font-variant-numeric:normal}
+.hero-num span{font-size:17px;font-weight:600;opacity:.86}
+.hero.over .hero-num b{color:#ffd1d6}
+.hero-sub{font-size:14px;opacity:.86;margin-top:6px;font-weight:500}
+.dayline{margin-top:18px}
+.dl-track{position:relative;height:10px;border-radius:5px;background:rgba(255,255,255,.22)}
+.dl-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#fff;transition:width .5s cubic-bezier(.2,.8,.2,1);min-width:0}
+.dl-now{position:absolute;top:-5px;width:3px;height:20px;border-radius:2px;background:#fff;transform:translateX(-50%);box-shadow:0 0 0 3px rgba(255,255,255,.22)}
+.dl-lbl{position:relative;display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;opacity:.8;margin-top:9px;height:15px}
+.dl-lbl .now{position:absolute;transform:translateX(-50%);opacity:1;font-weight:800;white-space:nowrap}
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hchip{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 15px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;font-size:14px;font-weight:700;white-space:nowrap}
+.hchip.line{background:transparent;border:1.5px solid rgba(255,255,255,.45)}
+.hchip .ic{width:16px;height:16px}
+.hchip b{color:#ffd9de;font-weight:800}
+button.hchip:active{transform:scale(.96)}
+
+/* --- Kunlar tasmasi --- */
+.strip.days{gap:8px;padding-top:2px;padding-bottom:2px;align-items:stretch}
+.dchip{flex:0 0 auto;width:50px;height:68px;border-radius:25px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:var(--tx-2);
+  position:relative;transition:background .18s,color .18s}
+.dchip small{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;opacity:.9}
+.dchip b{font-size:17px;font-weight:800;letter-spacing:-.02em;color:var(--tx)}
+.dchip i{width:22px;height:4px;border-radius:2px;background:var(--card-3);margin-top:4px;position:relative;overflow:hidden}
+.dchip i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:calc(var(--f,0) * 100%);background:var(--blue);border-radius:2px}
+.dchip.today small{color:var(--blue-ink)}
+.dchip.on{background:var(--blue);color:#fff;box-shadow:0 12px 20px -12px var(--blue)}
+.dchip.on b,.dchip.on small{color:#fff}
+.dchip.on i{background:rgba(255,255,255,.3)} .dchip.on i::after{background:#fff}
+.dchip.cal{background:var(--card);border:1px solid var(--line);color:var(--blue-ink)}
+
+/* --- Foydali / Behuda --- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{padding:16px}
+.tile-h{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:600;color:var(--tx-2)}
+.tile-v{display:flex;align-items:baseline;gap:6px;margin-top:12px}
+.tile-v b{font-size:25px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:normal}
+.tile-v span{font-size:13.5px;color:var(--tx-2);font-weight:600}
+.tile>small{display:block;font-size:12.5px;color:var(--tx-3);margin-top:3px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* --- Taqsimot afsonasi --- */
+.lg{display:grid;grid-template-columns:1fr;gap:2px;margin-top:14px}
+.lg-r{display:flex;align-items:center;gap:10px;padding:7px 2px;font-size:14.5px}
+.lg-r+.lg-r{border-top:1px solid var(--line-2)}
+.lg-n{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg-r b{font-weight:800}
+.lg-r small{width:40px;text-align:right;color:var(--tx-3);font-weight:600;font-size:12.5px}
+
+/* --- Kun xaritasi --- */
+.tl-track{position:relative;height:34px;border-radius:12px;background:var(--card-2);overflow:hidden;
+  background-image:linear-gradient(90deg,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%,transparent 25%,transparent calc(50% - 1px),var(--line) calc(50% - 1px),var(--line) 50%,transparent 50%,transparent calc(75% - 1px),var(--line) calc(75% - 1px),var(--line) 75%,transparent 75%)}
+.tl-track i{position:absolute;top:5px;bottom:5px;border-radius:6px;background:var(--g);box-shadow:0 0 0 1px var(--card-2)}
+.tl-track b{position:absolute;top:0;bottom:0;width:2px;background:var(--tx);transform:translateX(-50%)}
+.tl-ax{display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx-3);font-weight:600;margin-top:6px;padding:0 1px}
+
+/* --- Kayfiyat --- */
+.mood{display:flex;justify-content:space-between;gap:8px}
+.mood button{flex:1;height:52px;border-radius:18px;display:grid;place-items:center;background:var(--card-2);color:var(--tx-3);border:1.5px solid transparent;transition:transform .15s cubic-bezier(.3,1.5,.5,1),background .15s,color .15s}
+.mood button .ic{width:26px;height:26px}
+.mood button:active{transform:scale(.92)}
+.mood .m1.on{color:var(--bad);background:var(--bad-soft);border-color:var(--bad)}
+.mood .m2.on{color:var(--g-asosiy);background:color-mix(in srgb,var(--g-asosiy) 16%,transparent);border-color:var(--g-asosiy)}
+.mood .m3.on{color:var(--tx);background:var(--card-3);border-color:var(--tx-3)}
+.mood .m4.on{color:var(--ok);background:var(--ok-soft);border-color:var(--ok)}
+.mood .m5.on{color:var(--blue-ink);background:var(--blue-soft);border-color:var(--blue)}
+.mood button.on{transform:scale(1.04)}
+
+/* --- Kuzatuv --- */
+.insight{display:flex;gap:14px;align-items:flex-start}
+.insight h3{font-size:16px;font-weight:800;letter-spacing:-.015em;margin-bottom:4px}
+.insight p{font-size:14px;color:var(--tx-2);line-height:1.5}
+.insight p b{color:var(--tx);font-weight:700}
+.insight .link{margin-top:4px}
+
+/* ---------------- Yozuv oynasi ---------------- */
+.amt{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 2px}
+.amt.shake{animation:shake .36s}
+.amt-b{width:50px;height:50px;border-radius:50%;background:var(--card-2);border:1px solid var(--line);display:grid;place-items:center;color:var(--tx-2);flex:0 0 auto;transition:transform .1s}
+.amt-b:active{transform:scale(.9)}
+.amt-c{position:relative;display:flex;align-items:baseline;justify-content:center;gap:8px;min-width:0;cursor:text;padding-bottom:6px}
+.amt-c input{width:1ch;min-width:1ch;max-width:4.4ch;border:none;background:transparent;text-align:center;font-size:60px;font-weight:800;letter-spacing:-.03em;line-height:1.05;color:var(--tx);padding:0;caret-color:var(--blue);font-variant-numeric:tabular-nums;box-sizing:content-box}
+.amt-c input:focus,.amt-c input:focus-visible{outline:none;box-shadow:none}
+/* fokusda ramka o'rniga raqam ostida ingichka chiziq */
+.amt-c::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:3px;border-radius:2px;background:var(--blue);transform:scaleX(0);opacity:0;transition:transform .22s ease,opacity .22s}
+.amt-c:focus-within::after{transform:none;opacity:1}
+.amt-c input::placeholder{color:var(--tx-3);opacity:.55}
+.amt-c span{font-size:18px;font-weight:700;color:var(--tx-2)}
+.amt-s{text-align:center;font-size:13.5px;color:var(--tx-2);min-height:20px;margin-bottom:14px;font-weight:500}
+.amt-s.warn{color:var(--bad);font-weight:700}
+.katrow{display:flex;align-items:center;gap:13px;width:100%;padding:13px 14px;border-radius:24px;border:1.5px solid var(--line);text-align:left;margin-top:16px;transition:background .12s}
+.katrow:active{background:var(--card-2)}
+.katrow .row-main small{font-size:12px;margin:0 0 1px}
+.katrow .row-main b{font-size:16.5px}
+#eOxirgi,#eTez{margin-top:10px}
+@media(min-width:760px){ .sheet .chips.scroll{margin:0 -20px;padding:2px 20px} #eOxirgi,#eTez{margin-top:10px} }
+.sheet .chips.scroll{margin-left:-20px;margin-right:-20px;padding-left:20px;padding-right:20px}
+.sub-h{font-size:13.5px;font-weight:700;color:var(--tx-2);margin:22px 4px 10px}
+
+/* ---------------- Toifa tanlagich ---------------- */
+.srch{position:relative;margin-bottom:6px}
+.srch .ic{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--tx-3);width:20px;height:20px;pointer-events:none}
+.srch input{width:100%;height:52px;border-radius:26px;border:1.5px solid var(--line);background:var(--card-2);padding:0 18px 0 48px;font-size:16px;font-weight:600}
+.srch input:focus,.srch input:focus-visible{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft)}
+.srch input::-webkit-search-cancel-button{-webkit-appearance:none}
+.kat-gh{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--tx-2);margin:18px 4px 10px}
+.kat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kat-b{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:18px;background:var(--card-2);border:1.5px solid transparent;text-align:left;font-size:14px;font-weight:700;line-height:1.25;min-height:58px;min-width:0;transition:transform .1s}
+.kat-b span:last-child{min-width:0;overflow-wrap:break-word}
+.kat-b:active{transform:scale(.97)}
+.kat-b.on{border-color:var(--g);background:color-mix(in srgb,var(--g) 10%,transparent)}
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:8px}
+.icon-b{height:50px;border-radius:16px;display:grid;place-items:center;background:var(--card-2);color:var(--tx-2);border:1.5px solid transparent}
+.icon-b.on{background:color-mix(in srgb,var(--g) 16%,transparent);border-color:var(--g);color:color-mix(in srgb,var(--g) 80%,var(--tx))}
+
+/* ---------------- Taqvim ---------------- */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav b{font-size:17px;font-weight:800;letter-spacing:-.015em}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-w span{text-align:center;font-size:12px;font-weight:700;color:var(--tx-3);padding-bottom:4px}
+.cal-d{aspect-ratio:1;border-radius:34%;display:grid;place-items:center;font-size:14.5px;font-weight:700;color:var(--tx);background:var(--h0);position:relative;border:2px solid transparent;font-variant-numeric:tabular-nums}
+.cal-d.l1{background:var(--h1)} .cal-d.l2{background:var(--h2)} .cal-d.l3{background:var(--h3);color:#fff} .cal-d.l4{background:var(--h4);color:#fff}
+[data-theme="dark"] .cal-d.l4{color:#0a0d2c} [data-theme="dark"] .cal-d.l1,[data-theme="dark"] .cal-d.l2{color:#fff}
+.cal-d.today{border-color:var(--tx)}
+.cal-d.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.cal-d:active{transform:scale(.93)}
+.cal-leg{display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--tx-3);font-weight:600;margin-top:14px}
+.cal-leg i{width:14px;height:14px;border-radius:5px;display:inline-block}
+.cal-leg .l1{background:var(--h1)} .cal-leg .l2{background:var(--h2)} .cal-leg .l3{background:var(--h3)} .cal-leg .l4{background:var(--h4)}
+
+/* Namuna ma'lumot / ko'rgazma tasmasi: tor ekranda tugma ikkinchi qatorga tushadi */
+.demo-b{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding:10px 12px 10px 10px;margin-bottom:12px;border-radius:20px;background:var(--card);border:1.5px dashed var(--line)}
+.demo-t{flex:1 1 220px;min-width:0;display:flex;align-items:center;gap:12px;text-align:left}
+.demo-t>span:last-child{flex:1;min-width:0}
+.demo-b b{display:block;font-size:14px;font-weight:800}
+.demo-b small{display:block;font-size:12.5px;color:var(--tx-2);line-height:1.35}
+.demo-b .btn{flex:0 0 auto;margin-left:auto}
+
+/* ---------------- Kun chizig'i (vaqt bo'yicha) ---------------- */
+.tl2{display:flex;flex-direction:column;margin:0 -4px}
+.tl2-it,.tl2-gap,.tl2-now{display:grid;grid-template-columns:46px 58px minmax(0,1fr) auto;align-items:stretch;column-gap:10px;width:100%;text-align:left;padding:0 4px}
+.tl2-t{font-size:12px;font-weight:700;color:var(--tx-3);padding-top:6px;display:flex;flex-direction:column;justify-content:space-between}
+.tl2-t small{font-size:11.5px;font-weight:600;color:var(--tx-3);opacity:.75;padding-bottom:6px}
+.tl2-rail{position:relative;display:flex;justify-content:center}
+.tl2-rail::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:color-mix(in srgb,var(--g,var(--tx-3)) 30%,transparent);border-radius:2px}
+.tl2-pill{position:relative;width:52px;border-radius:26px;display:grid;place-items:center;margin:4px 0;background:var(--g);color:#fff;box-shadow:0 8px 18px -10px var(--g)}
+.tl2-pill .ic{width:22px;height:22px}
+.tl2-m{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:8px 0}
+.tl2-m small{font-size:12.5px;color:var(--tx-2);font-weight:600}
+.tl2-m b{font-size:16.5px;font-weight:800;letter-spacing:-.015em;line-height:1.25;margin-top:1px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tl2-m em{font-style:normal;font-size:12.5px;color:var(--tx-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.tl2-amt{align-self:center;font-weight:800;font-size:14.5px;color:var(--tx-2)}
+.tl2-it:active .tl2-pill{transform:scale(.95)}
+.tl2-gap{min-height:54px;--g:var(--tx-3)}
+.tl2-gap .tl2-rail::before{background:none;border-left:3px dotted color-mix(in srgb,var(--tx-3) 55%,transparent);width:0;margin-left:-1.5px}
+.tl2-gap .tl2-t{padding-top:0;justify-content:center;opacity:.8}
+.tl2-gm{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--tx-2);font-weight:500;min-width:0}
+.tl2-gm .ic{width:16px;height:16px;color:var(--tx-3);flex:0 0 auto}
+.tl2-gm b{color:var(--blue-ink);font-weight:800}
+.tl2-add{align-self:center;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue-ink)}
+.tl2-add .ic{width:18px;height:18px}
+.tl2-gap.now .tl2-gm b{color:var(--warn)}
+.tl2-gap:active{background:var(--card-2);border-radius:14px}
+.tl2-now{min-height:22px;align-items:center;font-size:12px;font-weight:800;color:var(--bad)}
+.tl2-now .tl2-t{color:var(--bad);padding:0;justify-content:center}
+.tl2-now .tl2-rail::before{display:none}
+.tl2-now .tl2-rail i{position:absolute;top:50%;left:-56px;right:-200vw;height:2px;background:var(--bad);opacity:.55}
+.tl2-now .tl2-rail i::after{content:"";position:absolute;left:62px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--bad)}
+.tl2{overflow:hidden}
+.tl2-start{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:22px;border:1.5px dashed color-mix(in srgb,var(--blue) 50%,transparent);color:var(--blue-ink)}
+.tl2-start>.ic{width:26px;height:26px;flex:0 0 auto}
+.tl2-start b{display:block;font-size:15.5px;color:var(--tx)} .tl2-start small{display:block;font-size:12.5px;color:var(--tx-2);margin-top:2px;line-height:1.4}
+
+/* ---------------- Hozir nima qilyapsiz ---------------- */
+.hozir.on{border-color:color-mix(in srgb,var(--g) 45%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--g) 12%,var(--card)),var(--card) 70%)}
+.hz-top{display:flex;align-items:center;gap:12px}
+.hz-m{flex:1;min-width:0} .hz-m small{display:block;font-size:12.5px;color:var(--tx-2);font-weight:600}
+.hz-m b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hz-t{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.hozir .chips.scroll .chip{gap:8px;padding-left:6px}
+.tile-ic.xs{width:28px;height:28px;border-radius:10px} .tile-ic.xs .ic{width:15px;height:15px}
+
+/* ---------------- Vaqt tanlagich ---------------- */
+.vt-f b{font-size:19px;font-weight:800;letter-spacing:.01em} .vt-f .ph{color:var(--tx-3);font-weight:700;font-size:18px}
+.vt-top{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 6px}
+.vt-disp{display:flex;align-items:center;gap:2px;font-size:54px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.vt-disp button{padding:4px 10px;border-radius:18px;color:var(--tx-3);transition:background .15s,color .15s}
+.vt-disp button.on{color:var(--tx);background:var(--blue-soft)}
+.vt-disp i{font-style:normal;color:var(--tx-3);margin-top:-6px}
+.vt-hint{text-align:center;font-size:13px;color:var(--tx-2);margin-bottom:12px}
+.vt-grid{display:grid;gap:8px}
+.vt-grid.s{grid-template-columns:repeat(6,1fr)} .vt-grid.m{grid-template-columns:repeat(4,1fr)}
+.vt-k{height:48px;border-radius:16px;background:var(--card-2);border:1px solid var(--line);font-size:17px;font-weight:700;color:var(--tx)}
+.vt-k.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.vt-k.yaqin{border-color:var(--blue)}
+.vt-k:active{transform:scale(.94)}
+.vt-tav{margin-top:14px}

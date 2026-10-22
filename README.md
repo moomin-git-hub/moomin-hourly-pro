@@ -1,99 +1,175 @@
-# Mo'min — Kun tartibi · server (Render + Neon)
+# Vaqt Banki 2.0
+
+Bir kun — 1440 daqiqa — 1440 tanga. Ilova vaqtni pul kabi hisoblaydi: nimaga sarflaganingizni yozasiz, rejalaysiz, tahlil qilasiz.
+
+Bu papkada ilovaning o'zi va uning serveri bor. **Server Render'da, baza Neon'da** ishlaydi: email bilan kirish, bulutli saqlash, qurilmalar orasida jonli sinxron. Firebase kerak emas. Ikkalasining ham bepul rejasi yetadi.
 
 ```
-Telefon / brauzer (PWA)  ──►  Render (Node server, bepul)  ──►  Neon (PostgreSQL, bepul, doimiy)
+server.js            server (Node.js + Express + PostgreSQL + WebSocket)
+package.json         kutubxonalar ro'yxati
+render.yaml          Render uchun tayyor sozlama (ixtiyoriy)
+public/index.html    ilovaning o'zi — bitta fayl
+public/sw.js         oflayn ishlash va tez ochilish
+public/manifest.json telefonga o'rnatish uchun
+public/icons/        ilova ikonkalari
+src/, test/          manba va sinovlar — faqat ilovani o'zgartirish uchun (9-bo'lim); serverga kerak emas
 ```
 
-- **Render** — serverni ishlatadi va ilovaning o'zini ham shu manzildan beradi.
-- **Neon** — ma'lumotlar bazasi. Render'ning o'z bepul bazasi 30 kundan keyin o'chib ketadi, Neon'niki esa muddatsiz.
-- Ikkalasi ham bepul rejada **uxlab qoladi**: Render 15 daqiqa so'rov bo'lmasa (qayta uyg'onishi ~1 daqiqa), Neon 5 daqiqada (uyg'onishi bir necha soniya). Ma'lumot yo'qolmaydi — faqat uzoq tanaffusdan keyingi birinchi ulanish sekinroq. Ilovaning o'zi har doim telefonning xotirasi bilan darhol ishlaydi, bulutga fonda ulanadi (ulanmasa o'zi qayta urinadi).
+---
+
+## 1. Joylash: Render (server) + Neon (baza)
+
+### 1-qadam. GitHub'ga yuklash
+1. GitHub'da yangi repozitoriy oching (masalan `vaqt-banki`, Private bo'lsa ham bo'ladi).
+2. **Add file → Upload files** ni bosib, shu papkadagi hamma narsani (`public` papkasi bilan birga) sudrab tashlang va **Commit changes** ni bosing.
+
+### 2-qadam. Baza — Neon
+1. <https://neon.com> da ro'yxatdan o'ting (karta so'ralmaydi).
+2. Yangi loyiha yarating: nomi — `vaqt-banki`, **Region — AWS Europe (Frankfurt)**. Regionni keyin o'zgartirib bo'lmaydi, shuning uchun aynan Frankfurt'ni tanlang — server ham o'sha shaharda turadi va so'rovlar tez ishlaydi.
+3. Loyiha ochilgach, tepada **Connect** tugmasini bosing. Chiqqan oynadagi manzilni (connection string) boshidan oxirigacha nusxalang. U shunga o'xshaydi:
+
+   ```
+   postgresql://neondb_owner:npg_…@ep-…-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+   ```
+
+   Hech narsasini o'zgartirmang. Oynadagi «Connection pooling» yoqilgan bo'lsa ham, o'chirilgan bo'lsa ham ishlaydi.
+
+> Bu manzil ichida baza paroli bor — uni hech kimga ko'rsatmang, chatga yoki GitHub'ga tashlamang. Faqat Render'ning Environment bo'limiga qo'yiladi. Bexosdan oshkor bo'lsa, Neon'da parolni yangilab (Roles → Reset password), Render'dagi manzilni almashtiring.
+
+### 3-qadam. Server — Render
+1. Render → **New → Web Service** → GitHub'dagi `vaqt-banki` repozitoriysini tanlang.
+2. Sozlamalar:
+   - **Language:** Node
+   - **Region:** Frankfurt (Neon bilan bir xil shahar)
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+   - **Instance Type:** Free
+3. **Environment Variables** bo'limiga bitta qator qo'shing:
+   - `DATABASE_URL` = Neon'dan nusxalagan manzil
+4. **Deploy Web Service** ni bosing. Jurnalda shu ikki qator chiqsa — tayyor:
+
+   ```
+   [db] ulandi: ep-…neon.tech (SSL, sertifikat tekshirildi, …)
+   Vaqt Banki v2.1.0 — 10000-portda ishlayapti
+   ```
+
+   Jadvallarni server o'zi yaratadi. Ulanib bo'lmasa, jurnalning oxirgi qatorida sababi va nima qilish kerakligi yoziladi (manzil chala nusxalangan, parol noto'g'ri va h.k.).
+
+(Yoki: Render → **New → Blueprint** → shu repozitoriy. `render.yaml` sozlamalarni o'zi to'ldiradi, faqat `DATABASE_URL` so'raladi.)
+
+### 4-qadam. Kirish
+Render bergan manzilni oching (masalan `https://vaqt-banki.onrender.com`) → **Ro'yxatdan o'tish**. Telefonda ham shu manzilni ochib, o'sha email va parol bilan kiring — yozuvlar ikkala qurilmada jonli ko'rinadi.
+
+Ro'yxatdan o'tib bo'lgach, begona odam hisob ochmasligi uchun Render → Environment'ga `ALLOW_SIGNUP` = `0` qo'shing (o'zingiz bemalol kira olasiz).
 
 ---
 
-## 1-qadam · Neon'da baza (≈ 3 daqiqa)
+## 2. Eski ma'lumotni ko'chirish
 
-1. **neon.com** ga kiring va ro'yxatdan o'ting (Google / GitHub / email).
-2. **Create project** → nom: `momin` → **Region: AWS Europe (Frankfurt)** (Render ham Frankfurt'da bo'ladi, shuning uchun tez).
-3. Loyiha ochilgach **Connect** tugmasini bosing. Ochilgan oynada **Connection pooling** yoqilgan bo'lsin (manzilda `-pooler` so'zi bo'ladi).
-4. `postgresql://…` bilan boshlanadigan manzilni **to'liq nusxalang** — bu `DATABASE_URL`. Parol shu manzilning ichida, uni hech kimga bermang va GitHub'ga yozmang.
+Eski ilovadagi ma'lumot o'sha brauzer xotirasida turibdi. Ikki yo'l bor:
 
-Jadvallarni qo'lda yaratish shart emas — server birinchi ishga tushganda o'zi yaratadi.
+**A. Hammasi birga (tavsiya).** Yozuvlar, o'z toifalaringiz, byudjet, shablonlar, kun rejalari va kayfiyat — hammasi ko'chadi.
+1. Eski ilova turgan joyga (masalan GitHub Pages'dagi fayllar o'rniga) `public` papkasi ichidagilarni qo'ying: `index.html`, `sw.js`, `manifest.json`, `icons`.
+2. Eski ilovani doim ochadigan qurilmada o'sha manzilni oching — eski yozuvlar yangi ko'rinishda chiqadi. Eski ko'rinish chiqaversa, sahifani bir-ikki marta yangilang.
+3. Kirish ekranida pastdagi **Server manzili** ga Render manzilingizni yozing → **Ro'yxatdan o'tish**. Hamma narsa hisobingizga yuklanadi.
+4. Bundan keyin Render manzilining o'zidan foydalaning — xohlagan qurilmada kirsangiz, ma'lumot keladi.
 
-## 2-qadam · Kodni GitHub'ga
+**B. Faqat yozuvlar.** Eski ilovada **Zaxira (JSON)** ni yuklab oling → yangi ilovada Profil → Zaxira va ma'lumotlar → **Zaxiradan yuklash**. Eski zaxira faylida faqat yozuvlar bor: toifalar, byudjet va shablonlarni qaytadan sozlaysiz.
 
-1. **github.com** → *New repository* → nom: `momin` (Private bo'lishi mumkin).
-2. Shu zip ichidagi hamma fayllarni repo'ga yuklang (*Add file → Upload files*). `render.yaml` repo'ning eng yuqorisida turishi kerak. `node_modules` papkasi bo'lsa yuklamang.
-
-## 3-qadam · Render'da server
-
-1. **render.com** → **New +** → **Blueprint** → GitHub'ni ulang → `momin` repo'sini tanlang.
-2. Render `render.yaml` ni o'qiydi va **DATABASE_URL** qiymatini so'raydi → 1-qadamda nusxalagan Neon manzilini qo'ying. (`JWT_SECRET` ni Render o'zi yaratadi.)
-3. **Deploy Blueprint** ni bosing. 2–4 daqiqada holat **Live** bo'ladi. Manzil: `https://momin-xxxx.onrender.com`.
-
-## 4-qadam · Tekshirish
-
-| Manzil | Nima ko'rsatadi |
-|---|---|
-| `…onrender.com/api/health` | `{"ok":true,…}` — server tirik (bazaga tegmaydi) |
-| `…onrender.com/api/health/db` | `{"ok":true,"ms":…}` — **Neon'ga ulanish ishlayapti**. Ishlamasa `error` maydonida sababi o'zbekcha yoziladi |
-| `…onrender.com` | ilovaning o'zi |
-
-Ilovada: **Yana → Sozlamalar → Hisob va sinxron → Ro'yxatdan o'tish** (email + parol). Boshqa qurilmada shu email bilan **Kirish** — ma'lumot sinxron bo'ladi.
-Telefonga o'rnatish: brauzer menyusidan **Bosh ekranga qo'shish**.
+Firebase'dagi eski nusxaga tegilmaydi — xohlagan payt o'chirib tashlashingiz mumkin.
 
 ---
 
-## Muammolar
+## 3. Telefonga o'rnatish
 
-| Belgi | Sabab va yechim |
-|---|---|
-| Deploy "Failed", logda `✖ Bazaga ulanib bo'lmadi — …` | Sabab shu satrning o'zida yozilgan. Odatda `DATABASE_URL` noto'g'ri nusxalangan: Neon → **Connect** → qaytadan nusxalab, Render → *Environment* → `DATABASE_URL` ni almashtiring → *Save*. |
-| `/api/health/db` → "parol noto'g'ri" | Neon'da parol almashtirilgan bo'lishi mumkin — yangi manzilni nusxalang. |
-| `/api/health/db` → "limit to'lgan" | Neon bepul limiti (oyiga 100 CU-soat yoki 1 GB) tugagan. Keyingi oy boshigacha kuting yoki Neon panelida tekshiring. |
-| Ilovada "☁ ulanmagan", "Server uyg'onmoqda…" | Render yoki Neon uxlab yotgan. 30–60 soniya kuting — ilova o'zi qayta ulanadi. |
-| Bazaning SSL sertifikati haqida xato | Render → *Environment* → `PGSSL` = `insecure` qo'shing (faqat Neon bo'lmagan baza uchun kerak bo'lishi mumkin). |
-
-## Uxlab qolmasligi uchun (ixtiyoriy)
-
-Bepul tashqi "pinger" (masalan UptimeRobot yoki cron-job.org) har 5–10 daqiqada `https://…onrender.com/api/health` ni chaqirsa, Render uxlamaydi.
-
-- Faqat **`/api/health`** ni chaqiring. `/api/health/db` ni pingerga **qo'ymang** — Neon uxlamay qoladi va bepul soatlari tez tugaydi.
-- Bitta xizmat butun oy uyg'oq tursa ~744 soat ketadi; Render'ning bepul chegarasi — oyiga 750 soat (barcha bepul xizmatlar uchun umumiy).
-
-Neon haqida: ilova har ~15 soniyada "yangilik bormi?" deb so'raydi, lekin server buni bazaga bormasdan, xotiradan javoblaydi. Shuning uchun ilova ochiq turganda ham baza uxlay oladi va soatlar tejaladi.
-
-## Yangilash
-
-Yangi `server.js`, `public/index.html` va boshqa fayllarni GitHub'ga yuklang — Render o'zi qayta joylaydi. Telefondagi ilova ham keyingi ochilishda yangilanadi.
-
-## Avval Render'ning o'z bazasi bilan joylagan bo'lsangiz
-
-1. Render → `momin` → *Environment* → `DATABASE_URL` ni Neon manziliga almashtiring → *Save* (qayta joylanadi).
-2. Neon'dagi baza bo'sh, shuning uchun ilovada qaytadan **ro'yxatdan o'ting**. **Eng ko'p ma'lumot turgan qurilmadan** boshlang — ilova uni o'zi bulutga yuklaydi, boshqa qurilmalar keyin kirib oladi.
-3. Eski `momin-db` bazasi endi kerak emas — Render panelidan o'chirib tashlashingiz mumkin.
+Manzilni Chrome'da oching → menyu (⋮) → **Bosh ekranga qo'shish**. Ilova alohida oynada, oflayn ham ochiladi. Yangi versiya chiqsa, ilova «Yangi versiya tayyor» deb xabar beradi.
 
 ---
 
-## Sozlamalar (Render → Environment)
+## 4. Faylni boshqa joyda saqlasangiz (GitHub Pages, APK)
 
-| O'zgaruvchi | Ma'nosi |
-|---|---|
-| `DATABASE_URL` | Neon manzili (majburiy). `psql '…'` ko'rinishida nusxalanib qolsa ham tushunadi. |
-| `JWT_SECRET` | Kirish tokenlari kaliti — Render yaratadi, o'zgartirmang (o'zgarsa hamma qayta kiradi). |
-| `PGSSL` | Odatda kerak emas. `off` — SSL'siz baza; `insecure` — sertifikatni tekshirmaslik. |
-| `PG_POOL_MAX` | Bazaga ochiq ulanishlar soni (standart 5). |
-| `NO_POLL_CACHE` | `1` bo'lsa sinxron so'rovlari har safar bazaga boradi (odatda kerak emas). |
+`index.html` ni Render'dan boshqa joyga qo'ysangiz ham ishlaydi — faqat serverni ko'rsatish kerak. Ikki yo'ldan biri:
 
-## Mahalliy ishga tushirish (sinov uchun)
+- kirish ekranida **Server manzili** ga Render manzilingizni yozing, yoki
+- `index.html` ichida `const VB_SERVER = "";` qatoriga manzilni yozib qo'ying: `const VB_SERVER = "https://vaqt-banki.onrender.com";`
 
-```bash
+---
+
+## 5. Bepul reja haqida bilib qo'ying
+
+**Render (server)**
+- **Server uxlaydi.** 15 daqiqa so'rov kelmasa, Render bepul serverni uxlatadi; keyingi ochilishda uyg'onishi bir daqiqagacha vaqt oladi. Ilova buni kutmaydi: telefonga o'rnatilgan bo'lsa darhol ochiladi, yozuvlar shu qurilmada saqlanadi va server uyg'onishi bilan o'zi yuboriladi (tepada bulut belgisi aylanib turadi).
+- **Oylik 750 soat — hamma bepul serverlarga umumiy.** Hisob, Kun tartibi va Vaqt Banki serverlari shu 750 soatni birga sarflaydi; tugasa, oy oxirigacha hammasi to'xtaydi. Shuning uchun ilovada **tejamkor rejim** bor: ilova 12 daqiqa ishlatilmasa yoki 3 daqiqa orqa fonda tursa, jonli aloqa uziladi va server uxlay oladi. Ekranga tegishingiz bilan aloqa tiklanadi.
+- **Parolni tiklash email orqali emas.** Render'ning bepul serverida xat yuborish (SMTP) portlari yopiq, shuning uchun ilovada **tiklash kodi** bor: Profil → Xavfsizlik → Tiklash kodi. Kodni yozib, xavfsiz joyda saqlang — parol unutilsa, kirish ekranidagi «Parolni unutdingizmi?» orqali shu kod bilan yangisini o'rnatasiz.
+
+**Neon (baza)**
+- **Muddati yo'q.** Bepul reja sinov emas, doimiy; ma'lumot muddat o'tgani uchun o'chirilmaydi. (Render'ning o'z bepul bazasi esa 30 kundan keyin to'xtaydi — baza shuning uchun Neon'da.)
+- **Baza ham uxlaydi** — 5 daqiqa so'rov kelmasa. Uyg'onishi soniyadan kam, sezilmaydi. Server bo'sh turganda bazaga umuman murojaat qilmaydi, shuning uchun baza bemalol uxlaydi.
+- **Oyiga 100 CU-soat** hisoblash vaqti (eng kichik o'lchamda taxminan 400 soat uyg'oq turish). Bir kishilik foydalanishga ortig'i bilan yetadi. Tugab qolsa, baza keyingi oy boshigacha to'xtaydi — ma'lumot o'chmaydi, yozuvlaringiz esa qurilmada navbatda turadi va keyin o'zi ketadi.
+- **1 GB joy.** Yillar davomidagi yozuvlar bir necha megabayt bo'ladi.
+- **Zaxira.** Neon bepul rejada faqat oxirgi 6 soatni tiklay oladi. Shuning uchun ilovada Profil → Zaxira va ma'lumotlar → **To'liq zaxira (JSON)** orqali vaqti-vaqti bilan nusxa olib turing.
+
+Manbalar: <https://render.com/docs/free>, <https://neon.com/docs/introduction/plans>
+
+---
+
+## 6. Sozlamalar (Environment Variables)
+
+| Nomi | Majburiy | Nima |
+|---|---|---|
+| `DATABASE_URL` | ha | Baza manzili — Neon → Connect oynasidagi connection string (istalgan PostgreSQL ham bo'ladi) |
+| `ALLOW_SIGNUP` | yo'q | `0` — yangi ro'yxatdan o'tish yopiladi |
+| `CORS_ORIGIN` | yo'q | `index.html` boshqa manzilda tursa, faqat shu manzillarga ruxsat (vergul bilan). Standart: hammasiga |
+| `PGSSL` | yo'q | Odatda kerak emas — server o'zi aniqlaydi (Neon uchun: SSL, sertifikat tekshiriladi). Qo'lda: `verify` — tekshirilgan SSL, `1` — tekshirilmagan SSL, `0` — SSL'siz |
+| `PORT` | yo'q | Render o'zi beradi |
+
+---
+
+## 7. Sinxron qanday ishlaydi
+
+- Har bir yozuv avval shu qurilmada saqlanadi, keyin serverga yuboriladi. Internet yo'q bo'lsa navbatda kutadi.
+- Server har bir o'zgarishga tartib raqami beradi; qurilma faqat o'zida yo'q o'zgarishlarni oladi.
+- Boshqa qurilmada o'zgarish bo'lsa, server WebSocket orqali darhol xabar beradi (jonli aloqa uzilsa — har 25 soniyada tekshiriladi).
+- Bitta yozuv ikki qurilmada bir vaqtda o'zgartirilsa, keyinroq o'zgartirilgani qoladi.
+- Parollar serverda ochiq saqlanmaydi (scrypt bilan xeshlanadi), kirish kalitlari ham xesh ko'rinishida turadi.
+- Server bilan baza orasidagi aloqa shifrlangan (SSL) va Neon sertifikati tekshiriladi.
+
+---
+
+## 8. Kompyuterda sinab ko'rish
+
+Node.js 18.17+ va PostgreSQL kerak.
+
+```
 npm install
-npm start                                   # DATABASE_URL yo'q → ma'lumot data.json faylda
-DATABASE_URL='postgresql://…' npm start     # Neon bilan
+DATABASE_URL=postgres://foydalanuvchi:parol@localhost:5432/vaqtbanki npm start
 ```
-`http://localhost:3000` da ilova ochiladi.
 
-## API (qisqacha)
+Keyin brauzerda `http://localhost:3000` ni oching.
 
-`POST /api/register` · `POST /api/login` · `GET /api/me` · `GET|POST|DELETE /api/data` (`?since=` — faqat o'zgarganlar) · `GET /api/snaps`, `GET /api/snaps/:sana` · `DELETE /api/account` · `GET /api/health`, `GET /api/health/db`.
-Parollar `scrypt` bilan, tokenlar HMAC bilan imzolanadi (90 kun). Har bir foydalanuvchi ma'lumoti alohida.
+---
+
+## 9. Ilovani o'zgartirish (ishlab chiquvchi uchun)
+
+`public/index.html` qo'lda yozilmagan — `src/` papkasidagi bo'laklardan yig'iladi:
+
+```
+src/css/*.css   ko'rinish          src/js/*.js   mantiq (00-data … 90-init)
+src/head.html, src/body.html       src/seed.json namuna ma'lumot
+```
+
+```
+npm i --no-save lucide-static@1.54.0 chart.js@4.5.1 @fontsource-variable/plus-jakarta-sans
+node src/build.mjs            # → public/index.html
+```
+
+Sinovlar haqiqiy PostgreSQL va Chromium (Playwright) bilan ishlaydi; yo'llar `test/_env.mjs` da:
+
+```
+node test/api.mjs                              # server: 63 ta tekshiruv
+sh test/srv.sh 4311 && node test/e2e.mjs       # brauzer: kirish, jonli sinxron, oflayn, ko'p oyna, baza uzilishi — 112 ta
+node test/quota.mjs && node test/perf.mjs      # xotira to'lishi, katta hajmda tezlik
+node test/tour.mjs light phone                 # barcha ekranlar skrinshoti (shots/ papkasiga)
+```
+
+**Diqqat:** sinovlar `TEST_DB` bazasidagi `vb_` jadvallarini tozalaydi — hech qachon haqiqiy bazaga qaratmang.

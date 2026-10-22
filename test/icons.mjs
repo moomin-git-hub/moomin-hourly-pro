@@ -1,0 +1,11 @@
+import { ROOT, toolsRequire } from "./_env.mjs"; const sharp = toolsRequire("sharp");
+const G = `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fdcc0"/><stop offset=".5" stop-color="#3f8ee8"/><stop offset="1" stop-color="#4a4bff"/></linearGradient></defs>`;
+const belgi = (cx, r, sw) => `<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#fff" stroke-width="${sw}"/><path d="M${cx} ${cx - r * 0.59}v${r * 0.59}l${r * 0.41} ${r * 0.29}" fill="none" stroke="#fff" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const yumaloq = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${G}<rect width="512" height="512" rx="144" fill="url(#g)"/>${belgi(256, 136, 40)}</svg>`;
+const toliq = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${G}<rect width="512" height="512" fill="url(#g)"/>${belgi(256, 108, 32)}</svg>`;
+const D = ROOT + "/public/icons/";
+await sharp(Buffer.from(yumaloq)).resize(512, 512).png().toFile(D + "icon-512.png");
+await sharp(Buffer.from(yumaloq)).resize(192, 192).png().toFile(D + "icon-192.png");
+await sharp(Buffer.from(toliq)).resize(512, 512).png().toFile(D + "maskable-512.png");
+await sharp(Buffer.from(toliq.replace('r="108"', 'r="124"'))).resize(180, 180).png().toFile(D + "apple-touch-icon.png");
+console.log("ikonkalar tayyor");

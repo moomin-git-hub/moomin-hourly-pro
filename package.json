@@ -1,10 +1,19 @@
 {
-  "name": "momin-server",
-  "version": "2.0.0",
+  "name": "vaqt-banki",
+  "version": "2.1.0",
   "private": true,
-  "description": "Mo'min — Kun tartibi: server (Render) + PostgreSQL (Neon). Email/parol bilan kirish va qurilmalararo sinxron.",
+  "description": "Vaqt Banki — har bir daqiqa bir tanga. Server: email bilan kirish, bulutli va jonli sinxron.",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" },
-  "dependencies": { "express": "^4.19.2", "pg": "^8.12.0" }
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.17 <25"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "ws": "^8.17.0"
+  }
 }
