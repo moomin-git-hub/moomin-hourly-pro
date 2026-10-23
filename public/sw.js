@@ -6,7 +6,7 @@
       Orqa fonda yangi nusxa tekshiriladi; o'zgargan bo'lsa saqlanadi va ilovaga «Yangi versiya tayyor» deb xabar beriladi.
    3. Keshga faqat haqiqiy ilova sahifasi tushadi (ichida BELGI bo'lishi shart) — server uyg'onayotganda
       chiqadigan vaqtinchalik sahifa yoki xato sahifasi hech qachon saqlanmaydi. */
-const KESH = "vaqt-banki-qobiq-v2";
+const KESH = "vaqt-banki-qobiq-v3";
 const BELGI = 'id="scr-asosiy"';
 const QOSHIMCHA = ["manifest.json", "icons/icon-192.png", "icons/icon-512.png"];
 const SAHIFA = new URL("index.html", self.registration.scope).href;

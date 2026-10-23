@@ -4237,7 +4237,10 @@ if(document.readyState === "loading") document.addEventListener("DOMContentLoade
 if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
   window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
   navigator.serviceWorker.addEventListener("message",e=>{
-    if(e.data && e.data.t==="yangi-versiya" && typeof toast==="function")
+    if(!e.data || e.data.t!=="yangi-versiya") return;
+    // ilova endigina ochilgan va hech narsa yozilmayotgan bo'lsa — yangi versiyaga darhol o'tiladi
+    if(performance.now()<15000 && !document.querySelector("#overlays .ov") && !(document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName))){ location.reload(); return; }
+    if(typeof toast==="function")
       toast(ic("download")+"<span>Yangi versiya tayyor</span>",{ms:15000,amal:{matn:"Yangilash",fn:()=>location.reload()}});
   });
 }

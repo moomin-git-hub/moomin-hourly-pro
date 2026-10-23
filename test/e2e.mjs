@@ -269,9 +269,14 @@ try {
     fs.writeFileSync(IDX, asl.replace("</body>", '<i id="yangi-nusxa" hidden></i></body>'));
     await pJ.goto(LH + "/");
     t("yangi versiya chiqqanda: avval keshdagi nusxa ochiladi", await ev(pJ, () => !document.querySelector("#yangi-nusxa")));
-    t("…«Yangi versiya tayyor» xabari chiqadi", await kut(pJ, () => Array.from(document.querySelectorAll(".toast")).some((x) => x.textContent.includes("Yangi versiya")), null, 8000));
+    t("…ilova endigina ochilgan bo'lsa, yangi nusxaga o'zi o'tadi", await kut(pJ, () => !!document.querySelector("#yangi-nusxa"), null, 10000));
+    // ilova ishlatilayotgan paytda (oyna ochiq) yangi versiya kelsa — o'zi qayta yuklanmaydi, «Yangilash» taklif qilinadi
+    fs.writeFileSync(IDX, asl.replace("</body>", '<i id="yangi-nusxa-2" hidden></i></body>'));
+    await pJ.goto(LH + "/"); await kut(pJ, () => typeof A === "object" && !document.querySelector("#app").hidden, null, 5000);
+    await ev(pJ, () => A.entryNew());
+    t("…ish paytida: «Yangi versiya tayyor» xabari chiqadi", await kut(pJ, () => Array.from(document.querySelectorAll(".toast")).some((x) => x.textContent.includes("Yangi versiya")), null, 10000));
     await pJ.click(".toast button"); await pJ.waitForLoadState("load");
-    t("…«Yangilash» bosilgach yangi nusxa ochiladi", await kut(pJ, () => !!document.querySelector("#yangi-nusxa"), null, 6000));
+    t("…«Yangilash» bosilgach yangi nusxa ochiladi", await kut(pJ, () => !!document.querySelector("#yangi-nusxa-2"), null, 6000));
     // server "uyg'onish sahifasi" qaytarsa — keshga tushmaydi
     fs.writeFileSync(IDX, "<!doctype html><title>Service waking up</title><p>Please wait…</p>");
     await pJ.goto(LH + "/"); await sleep(1500); await pJ.goto(LH + "/");
